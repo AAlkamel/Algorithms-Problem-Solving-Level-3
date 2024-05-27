@@ -15,19 +15,24 @@ char readChar()
   cin >> theChar;
   return theChar;
 }
-int countLetter(string s, char c)
+bool IsVowel(char Character)
+{
+  char c = tolower(Character);
+  return (c == 'a' || c == 'e' || c == 'i' || c == 'o' || c == 'u');
+}
+int countVowels(string s)
 {
   int count = 0;
   for (int i = 0; i < s.length(); i++)
   {
-    if (s[i] == c)
+    if (IsVowel(s[i]))
       count++;
   }
   return count;
 }
+
 int main()
 {
   string s1 = readString();
-  char c = readChar();
-  cout << "\n count  letters is: " << countLetter(s1, c) << endl;
+  cout << "\n count vowels is: " << countVowels(s1) << endl;
 }
