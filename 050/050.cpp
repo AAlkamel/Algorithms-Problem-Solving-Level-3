@@ -13,6 +13,7 @@ struct sClient
   string Name;
   string Phone;
   double AccountBalance;
+  bool MarkForDelete;
 };
 
 string readString(string message)
@@ -152,11 +153,88 @@ void printClientsData(vector<sClient> clients)
     printClient(client);
   }
 }
+bool findClientByAccountNumber(vector<sClient> clients, string AccountNumber, sClient &client)
+{
+  for (sClient &c : clients)
+  {
+    if (c.AccountNumber == AccountNumber)
+    {
+      client = c;
+      return true;
+    }
+  }
+  return false;
+}
+bool MarkClientForDelete(vector<sClient> &clients, string AccountNumber)
+{
+  for (sClient &c : clients)
+  {
+    if (c.AccountNumber == AccountNumber)
+    {
+      c.MarkForDelete = true;
+      return true;
+    }
+  }
+  return false;
+}
+string ReadAccountNumber()
+{
+  return readString("enter AccountNumber to find client?\n");
+}
+void SaveClientsDataToFile(string fileName, vector<sClient> &clients)
+{
+  fstream MyFile;
+  MyFile.open(FileName, ios::out);
+  if (MyFile.is_open())
+  {
+    for (sClient &client : clients)
+    {
+      if (!client.MarkForDelete)
+      {
+        MyFile << clientToLine(client, ",") << endl;
+      }
+    }
+
+    MyFile.close();
+  }
+}
+bool DeleteClientByAccountNumber(vector<sClient> &clients, string AccountNumber)
+{
+  sClient client;
+  char Answer = 'n';
+  if (findClientByAccountNumber(clients, AccountNumber, client))
+  {
+    printClientRecord(client);
+    cout << "\n\nAre you sure you want delete this client? [y/n]";
+    cin >> Answer;
+    if (Answer == 'y' || Answer == 'Y')
+    {
+      MarkClientForDelete(clients, AccountNumber);
+      SaveClientsDataToFile(FileName, clients);
+      // refresh data
+      clients = loadClientsDataFromFile(FileName);
+      cout << "\n\nClient deleted successfully";
+      return true;
+    }
+    else
+    {
+      return false;
+    }
+  }
+  else
+  {
+    cout << "The client with account number (" << AccountNumber << ") not found.";
+  }
+  return false;
+}
+
 int main()
 {
   vector<sClient> clients = loadClientsDataFromFile(FileName);
-  printClientsData(clients);
+  // printClientsData(clients);
   // AddClients();
+  string AccountNumber = ReadAccountNumber();
+  DeleteClientByAccountNumber(clients, AccountNumber);
   system("pause>0");
   return 0;
 }

@@ -152,11 +152,39 @@ void printClientsData(vector<sClient> clients)
     printClient(client);
   }
 }
-int main()
+bool findClientByAccountNumber(string AccountNumber, sClient &client)
 {
   vector<sClient> clients = loadClientsDataFromFile(FileName);
-  printClientsData(clients);
+  for (sClient &c : clients)
+  {
+    if (c.AccountNumber == AccountNumber)
+    {
+      client = c;
+      return true;
+    }
+  }
+  return false;
+}
+string ReadAccountNumber()
+{
+  return readString("enter AccountNumber to find client?\n");
+}
+int main()
+{
+  // vector<sClient> clients = loadClientsDataFromFile(FileName);
+  // printClientsData(clients);
   // AddClients();
+  string AccountNumber = ReadAccountNumber();
+  sClient client;
+  if (findClientByAccountNumber(AccountNumber, client))
+  {
+    printClientRecord(client);
+  }
+  else
+  {
+    cout << "The client with account number (" << AccountNumber << ") not found.";
+  }
+
   system("pause>0");
   return 0;
 }
